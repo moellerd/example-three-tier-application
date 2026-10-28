@@ -1,4 +1,4 @@
-# example-three-tier-application
+  # example-three-tier-application
 
 A reference implementation of a three-tier web application: a Next.js frontend, an Express REST API, and a PostgreSQL database. It runs locally with Docker Compose and deploys to Google Cloud Platform (Cloud Run + Cloud SQL) via Terraform.
 
@@ -110,8 +110,8 @@ The `src/infrastructure/` directory contains Terraform that provisions:
 cd src/infrastructure
 terraform init
 terraform apply -var="project_id=my-project" \
-                -var="api_image=gcr.io/my-project/api:latest" \
-                -var="web_image=gcr.io/my-project/web:latest"
+                 -var="api_image=gcr.io/my-project/api:latest" \
+                 -var="web_image=gcr.io/my-project/web:latest"
 ```
 
 After apply, `terraform output web_url` gives the public URL.
@@ -130,3 +130,26 @@ DATABASE_URL=postgres://app:app@localhost:5432/app npx node-pg-migrate down
 ```
 
 When running via Docker Compose the `migrate` service handles this automatically on startup.
+
+## Testing
+
+This project includes comprehensive tests for all three tiers:
+
+- **Frontend tests**: Jest and React Testing Library for component and integration tests
+- **API tests**: Jest for unit and integration tests of Express endpoints
+- **Database tests**: Migration validation and schema integrity checks
+
+To run tests locally:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
+Tests are automatically run in CI/CD pipelines on every pull request to ensure code quality and prevent regressions.
