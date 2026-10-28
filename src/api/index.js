@@ -39,7 +39,15 @@ app.patch('/tasks/:id', async (req, res) => {
 
   const current = rows[0];
   const newCompleted = completed !== undefined ? Boolean(completed) : current.completed;
-  const newTitle = title !== undefined ? title.trim() : current.title;
+  
+  // Validate title if provided
+  let newTitle = current.title;
+  if (title !== undefined) {
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ error: 'title is required' });
+    }
+    newTitle = title.trim();
+  }
 
   const { rows: updated } = await db.query(
     'UPDATE tasks SET completed = $1, title = $2 WHERE id = $3 RETURNING *',
