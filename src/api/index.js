@@ -10,9 +10,9 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-// GET /tasks — list all tasks
+// GET /tasks — list all tasks (excluding deleted)
 app.get('/tasks', async (_req, res) => {
-  const { rows } = await db.query('SELECT * FROM tasks ORDER BY created_at ASC');
+  const { rows } = await db.query('SELECT * FROM tasks WHERE deleted_at IS NULL ORDER BY created_at ASC');
   res.json(rows);
 });
 
@@ -34,7 +34,7 @@ app.patch('/tasks/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const { completed, title } = req.body;
 
-  const { rows } = await db.query('SELECT * FROM tasks WHERE id = $1', [id]);
+  const { rows } = await db.query('SELECT * FROM tasks WHERE id = $1 AND deleted_at IS NULL', [id]);
   if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
 
   const current = rows[0];
@@ -46,6 +46,20 @@ app.patch('/tasks/:id', async (req, res) => {
     [newCompleted, newTitle, id]
   );
   res.json(updated[0]);
+});
+
+// DELETE /tasks/:id — soft delete a task
+app.delete('/tasks/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+
+  const { rows } = await db.query('SELECT * FROM tasks WHERE id = $1 AND deleted_at IS NULL', [id]);
+  if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
+
+  const { rows: deleted } = await db.query(
+    'UPDATE tasks SET deleted_at = NOW() WHERE id = $1 RETURNING *',
+    [id]
+  );
+  res.json(deleted[0]);
 });
 
 app.listen(PORT, () => {

@@ -9,6 +9,7 @@ export type Task = {
   title: string;
   completed: boolean;
   created_at: string;
+  deleted_at: string | null;
 };
 
 export async function getTasks(): Promise<Task[]> {
@@ -19,19 +20,30 @@ export async function getTasks(): Promise<Task[]> {
 
 export async function createTask(formData: FormData) {
   const title = formData.get('title') as string;
-  await fetch(`${API_URL}/tasks`, {
+  const res = await fetch(`${API_URL}/tasks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title }),
   });
+  if (!res.ok) throw new Error('Failed to create task');
   revalidatePath('/');
 }
 
 export async function toggleTask(id: number, completed: boolean) {
-  await fetch(`${API_URL}/tasks/${id}`, {
+  const res = await fetch(`${API_URL}/tasks/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ completed }),
   });
+  if (!res.ok) throw new Error('Failed to update task');
+  revalidatePath('/');
+}
+
+export async function deleteTask(id: number) {
+  const res = await fetch(`${API_URL}/tasks/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) throw new Error('Failed to delete task');
   revalidatePath('/');
 }
