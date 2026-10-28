@@ -16,7 +16,7 @@ Browser → Web (Next.js :3000) → API (Express :3001) → PostgreSQL
 | Migrations | node-pg-migrate | `src/db/` |
 | Infrastructure | Terraform (GCP) | `src/infrastructure/` |
 
-The app is a simple task manager (to-do list) that demonstrates how the three tiers communicate.
+The app is a simple challenge tracker that demonstrates how the three tiers communicate.
 
 ## Running locally with Docker Compose
 
@@ -62,9 +62,9 @@ The API is not exposed directly, but you can reach it through the web container 
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/health` | Health check |
-| GET | `/tasks` | List all tasks |
-| POST | `/tasks` | Create a task (`{ "title": "..." }`) |
-| PATCH | `/tasks/:id` | Update a task (`{ "completed": true }` or `{ "title": "..." }`) |
+| GET | `/challenges` | List all challenges |
+| POST | `/challenges` | Create a challenge (`{ "title": "..." }`) |
+| PATCH | `/challenges/:id` | Update a challenge (`{ "completed": true }` or `{ "title": "..." }`) |
 
 ## Project structure
 
@@ -110,8 +110,8 @@ The `src/infrastructure/` directory contains Terraform that provisions:
 cd src/infrastructure
 terraform init
 terraform apply -var="project_id=my-project" \
-                -var="api_image=gcr.io/my-project/api:latest" \
-                -var="web_image=gcr.io/my-project/web:latest"
+                 -var="api_image=gcr.io/my-project/api:latest" \
+                 -var="web_image=gcr.io/my-project/web:latest"
 ```
 
 After apply, `terraform output web_url` gives the public URL.

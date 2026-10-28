@@ -1,5 +1,5 @@
 exports.up = (pgm) => {
-  pgm.createTable('tasks', {
+  pgm.createTable('challenges', {
     id: { type: 'serial', primaryKey: true },
     title: { type: 'varchar(500)', notNull: true },
     completed: { type: 'boolean', notNull: true, default: false },
@@ -8,5 +8,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('tasks');
+  pgm.dropTable('challenges');
 };

@@ -4,22 +4,22 @@ import { revalidatePath } from 'next/cache';
 
 const API_URL = process.env.API_URL || 'http://localhost:3001';
 
-export type Task = {
+export type Challenge = {
   id: number;
   title: string;
   completed: boolean;
   created_at: string;
 };
 
-export async function getTasks(): Promise<Task[]> {
-  const res = await fetch(`${API_URL}/tasks`, { cache: 'no-store' });
-  if (!res.ok) throw new Error('Failed to fetch tasks');
+export async function getChallenges(): Promise<Challenge[]> {
+  const res = await fetch(`${API_URL}/challenges`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to fetch challenges');
   return res.json();
 }
 
-export async function createTask(formData: FormData) {
+export async function createChallenge(formData: FormData) {
   const title = formData.get('title') as string;
-  await fetch(`${API_URL}/tasks`, {
+  await fetch(`${API_URL}/challenges`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title }),
@@ -27,8 +27,8 @@ export async function createTask(formData: FormData) {
   revalidatePath('/');
 }
 
-export async function toggleTask(id: number, completed: boolean) {
-  await fetch(`${API_URL}/tasks/${id}`, {
+export async function toggleChallenge(id: number, completed: boolean) {
+  await fetch(`${API_URL}/challenges/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ completed }),
