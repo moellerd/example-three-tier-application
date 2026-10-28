@@ -11,6 +11,14 @@ export type Task = {
   created_at: string;
 };
 
+export type Challenge = {
+  id: number;
+  title: string;
+  description: string;
+  difficulty: string;
+  created_at: string;
+};
+
 export async function getTasks(): Promise<Task[]> {
   const res = await fetch(`${API_URL}/tasks`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch tasks');
@@ -34,4 +42,28 @@ export async function toggleTask(id: number, completed: boolean) {
     body: JSON.stringify({ completed }),
   });
   revalidatePath('/');
+}
+
+export async function getChallenges(): Promise<Challenge[]> {
+  const res = await fetch(`${API_URL}/challenges`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to fetch challenges');
+  return res.json();
+}
+
+export async function createChallenge(formData: FormData) {
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const difficulty = formData.get('difficulty') as string;
+  
+  const res = await fetch(`${API_URL}/challenges`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description, difficulty }),
+  });
+  
+  if (!res.ok) {
+    throw new Error('Failed to create challenge');
+  }
+  
+  revalidatePath('/challenges');
 }
