@@ -48,6 +48,33 @@ app.patch('/tasks/:id', async (req, res) => {
   res.json(updated[0]);
 });
 
+// GET /challenges — list all challenges
+app.get('/challenges', async (_req, res) => {
+  const { rows } = await db.query('SELECT * FROM challenges ORDER BY created_at ASC');
+  res.json(rows);
+});
+
+// POST /challenges — create a challenge
+app.post('/challenges', async (req, res) => {
+  const { title, description, difficulty } = req.body;
+  
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    return res.status(400).json({ error: 'title is required' });
+  }
+  if (!description || typeof description !== 'string' || !description.trim()) {
+    return res.status(400).json({ error: 'description is required' });
+  }
+  
+  const validDifficulties = ['easy', 'medium', 'hard'];
+  const difficultyLevel = difficulty && validDifficulties.includes(difficulty) ? difficulty : 'medium';
+  
+  const { rows } = await db.query(
+    'INSERT INTO challenges (title, description, difficulty) VALUES ($1, $2, $3) RETURNING *',
+    [title.trim(), description.trim(), difficultyLevel]
+  );
+  res.status(201).json(rows[0]);
+});
+
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
