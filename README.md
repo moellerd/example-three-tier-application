@@ -39,6 +39,8 @@ This starts four services in order:
 
 Once running, open [http://localhost:3000](http://localhost:3000).
 
+To follow the application logs for the web and API services, run `docker compose logs -f web api`.
+
 ### Stop and clean up
 
 ```bash
